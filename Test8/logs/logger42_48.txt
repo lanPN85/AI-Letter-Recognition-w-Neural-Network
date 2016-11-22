@@ -1,0 +1,24 @@
+Network parameters
+Hidden size 1: 40
+Hidden size 2: 60
+Epsilon: 0.15
+Max iteration: 3600
+
+lambda = 4.2
+Training cost: 1.97371030616
+Training accuracy: 0.863214781275
+Cost at cross-validation: 5.44807911779
+Cross-validation accuracy: 0.704498977505
+
+lambda = 4.8
+Training cost: 2.04920731299
+Training accuracy: 0.848462718177
+Cost at cross-validation: 5.46830112219
+Cross-validation accuracy: 0.695296523517
+
+Training time: 70023s
+Optimal lambda: 4.2
+Best cost at cross-validation: 5.44807911779
+Best cross-validation accuracy: 0.704498977505
+Training accuracy: 0.863214781275
+Test accuracy: 0.691547375596

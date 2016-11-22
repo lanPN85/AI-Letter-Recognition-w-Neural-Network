@@ -1,0 +1,1 @@
+python nntrain.py training.txt 5000 401
