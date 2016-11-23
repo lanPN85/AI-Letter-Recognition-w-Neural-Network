@@ -8,6 +8,7 @@ import datetime
 
 # ----- Neural Network /w 2 Hidden Layers ------
 # Fetch training data
+# Lay du lieu va training label
 print("Getting training data...")
 inp_name = sys.argv[1]
 M = np.loadtxt(inp_name)
@@ -19,6 +20,7 @@ y = np.reshape(M[:,col-1],(row,1))
 print("Done!")
 
 # Fetch cross-validation data
+# Lay du lieu va validation label
 print("Getting cross-validation data...")
 inp_name = sys.argv[2]
 M = np.loadtxt(inp_name)
@@ -29,6 +31,7 @@ ycv = np.reshape(M[:,col-1],(cv_row,1))
 print("Done!")
 
 # Fetch test data
+# Lay du lieu va test label
 print("Getting test data...")
 inp_name = sys.argv[3]
 M = np.loadtxt(inp_name)
@@ -39,6 +42,7 @@ ytest = np.reshape(M[:,col-1],(test_row,1))
 print("Done!")
 
 # Convert labels
+# Dua cac nhan tu dang so nguyen thanh cac vector co vi tri nhan dung =1 va cac vi tri khac =0
 num_labels = int(sys.argv[4])
 Y = np.zeros((row,num_labels))
 Ycv = np.zeros((cv_row,num_labels))
@@ -52,6 +56,7 @@ while i<cv_row:
     i += 1
 
 # Set up neural network
+# Khoi tao tham so
 lamb = 0.0
 lamb_list = nn.lamb_list
 eps = nn.eps
@@ -59,7 +64,6 @@ input_size = col-1
 hidden_size1 = nn.hidden_size1
 hidden_size2 = nn.hidden_size2
 
-# Training + Cross Validating
 warnings.filterwarnings("ignore")
 theta0 = np.random.rand(hidden_size1,input_size+1)
 theta1 = np.random.rand(hidden_size2,hidden_size1+1)
@@ -70,16 +74,17 @@ best_jcv = 1000.0
 best_cv_acc = -1.0
 best_lamb = 0.0
 
+# Bat dau viet log
 log = file('logger.txt','wt')
 log.write("Network parameters\n")
 log.writelines(("Hidden size 1: " + str(hidden_size1)+"\n", "Hidden size 2: " + str(hidden_size2)+"\n", "Epsilon: " + str(eps)+"\n", "Max iteration: " + str(nn.max_iter)+"\n\n"))
 log.close()
 
-t0 = datetime.datetime.now()
-
+# Training + Cross Validating
+t0 = datetime.datetime.now() # Ghi lai tgian bat dau
 print("Training neural network...")
 print("#Training examples: " + str(row))
-for lamb in lamb_list:
+for lamb in lamb_list: # Train vs tung gia tri lambda cho trc
 	theta0 = np.random.rand(hidden_size1,input_size+1)
 	theta0 = theta0 * 2 * eps - eps
 	theta1 = np.random.rand(hidden_size2,hidden_size1+1)
@@ -88,12 +93,15 @@ for lamb in lamb_list:
 	theta2 = theta2 * 2 * eps - eps
 	nn_params = np.vstack((np.reshape(theta0,(theta0.size,1)),np.reshape(theta1,(theta1.size,1)),np.reshape(theta2,(theta2.size,1)))).flatten()
 
+	# Hien thi lambda & gia tri ham muc tieu ban dau
 	print("lambda = " + str(lamb))
 	print("Initial cost: "+ str(nn.costFunction(nn_params,input_size,hidden_size1,hidden_size2,num_labels,X,Y,lamb)))
 
+	# Chay ham toi uu
 	result = scipy.optimize.fmin_l_bfgs_b(nn.costFunction,nn_params,fprime=nn.gradient,args=(input_size, hidden_size1, hidden_size2, num_labels,X,Y,lamb),approx_grad=False, disp = 1, maxiter = nn.max_iter)
 	train_params = result[0]
 
+	# Tinh do chinh xac tren tap training + validation
 	acc = nn.assess(X,y,train_params,row,input_size,hidden_size1,hidden_size2,num_labels)
 	print("Training accuracy: " + str(acc))
 	jcv = nn.costFunction(train_params,input_size,hidden_size1,hidden_size2,num_labels,Xcv,Ycv,lamb)
@@ -105,6 +113,7 @@ for lamb in lamb_list:
 	log.writelines(("lambda = " + str(lamb)+"\n", "Training cost: " + str(result[1])+"\n", "Training accuracy: " + str(acc) + "\n", "Cost at cross-validation: " + str(jcv)+"\n", "Cross-validation accuracy: " + str(cv_acc)+"\n", "\n"))
 	log.close()
 
+	# Ghi de neu dat kq tot hon
 	if cv_acc>best_cv_acc:
 		best_jcv = jcv
 		best_cv_acc = cv_acc
@@ -112,6 +121,7 @@ for lamb in lamb_list:
 		best_params = train_params
 		best_lamb = lamb
 
+# Tinh tong tgian chay
 t1 = datetime.datetime.now()
 dlt = t1 - t0
 # Test results
