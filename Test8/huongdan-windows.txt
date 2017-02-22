@@ -1,2 +1,0 @@
-Chạy cmd, cd vào thư mục chứa file
-Chạy lệnh: python nntest.py train.txt cv.txt test.txt 52
